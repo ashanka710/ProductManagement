@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 const port = process.env.PORT || 3000;
-const url = "";
+const url = "mongodb+srv://Ashanka1:24Ashanka123@cluster0.yd6fjme.mongodb.net/test";
 
 mongoose
     .connect(url)
