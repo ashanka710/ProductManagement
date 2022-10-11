@@ -34,7 +34,7 @@ const authorization = async function (req, res, next) {
         if (!user) return res.status(404).send({ status: false, message: "user not Found" })
 
         if (user._id !== userLoggedIn) {
-            return res.status(403).send({ status: false, message: "You are not an authorised Person" })
+            return res.status(403).send({ status: false, message: "You can't access other's data" })
         }
         next()
         

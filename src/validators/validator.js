@@ -8,5 +8,15 @@ function validateObjectId(id) {
     return bool;
 }
 
+const stringChecking = function (data) {
+    if (typeof data !== 'string' || data === undefined) {
+        return false;
+    } else if (typeof data === 'string' && data.trim().length === 0) {
+        return false;
+    } else {
+        return true;
+    }
+}
 
-module.exports = { isvalidEmail, checkPassword, validateObjectId }
+
+module.exports = { isvalidEmail, checkPassword, validateObjectId, stringChecking }

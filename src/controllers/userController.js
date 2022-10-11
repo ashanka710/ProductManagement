@@ -12,8 +12,6 @@ const { isvalidEmail, checkPassword, validateObjectId } = require('../validators
 const getUserById = async (req, res) => {
     let userId = req.params.userId
 
-    if(!validateObjectId(userId)) return res.status(400).send({status: false, message: "please provide valid userId"})
-
     const userProfile = await userModel.findById(userId)
     if(!userProfile) return res.status(404).send({ status: false, message: `No user found with this id ${userId}`})
 
