@@ -1,6 +1,7 @@
 const userModel = require('../models/userModel');
 const jwt = require('jsonwebtoken')
 const bcrypt = require('bcrypt')
+const { uploadFile } = require("../aws/aws.js");
 const { isvalidEmail, checkPassword, validateObjectId } = require('../validators/validator')
 
 
@@ -231,34 +232,113 @@ const register = async (req, res) => {
 };
 //===================================================post api user=============================================================>
 
+//Start===================================================get api user=============================================================>
 
 
-const getUserById = async (req, res) => {
-    let userId = req.params.userId
+// const getUserById = async (req, res) => {
+//     let userId = req.params.userId
 
-    const userProfile = await userModel.findById(userId)
-    if(!userProfile) return res.status(404).send({ status: false, message: `No user found with this id ${userId}`})
+//     const userProfile = await userModel.findById(userId)
+//     if(!userProfile) return res.status(404).send({ status: false, message: `No user found with this id ${userId}`})
 
-    return res.status(200).send({ status: true, message: "User profile details", data: userProfile})
+//     return res.status(200).send({ status: true, message: "User profile details", data: userProfile})
+// }
+const getUserById = async function(req,res){
+    try{
+        let userId = req.params.userId
+        //validation for userId
+        if(!isValid(userId))
+        return res.status(400).send({ status: false, message: "UserId must be present it cannot remain empty" });
+        if(!isValidObjectId(userId))
+        return res.status(400).send({ status: false, message: "Please provide valid userId" });
+
+        //find user in DB
+        let checkUserId = await userModel.findById(userId);
+        if(!checkUserId){
+            return res.status(404).send({ status: false, message: "No User found" });
+        }
+
+        //authorization 
+        if(req.decodedToken != userId)
+            return res.status(403).send({ status: false, message: "Error, authorization failed" })
+
+        return res.status(200).send({ status: true, message: "User profile details", data: checkUserId })
+
+    }catch(err){
+        return res.status(500).send({ status: false, message: error.message });
+    }
 }
 
+//End===================================================get api user=============================================================>
+
+// const loginUser = async (req, res) => {
+//     const user = req.body;
+//     if (Object.keys(user).length === 0) return res.status(400).send({ status: false, message: "enter a field to login" });
+
+//     const { email, password } = user
+
+//     if (!isvalidEmail.test(email)) return res.status(400).send({ status: false, message: "email must be present and valid" });
+//     //if (!checkPassword.test(password)) return res.status(400).send({ status: false, message: "Please Enter Your Password" });
+
+//     const loggedInUser = await userModel.findOne({ email: email, password: password })
+//     const {_id} = loggedInUser
+//     if (!loggedInUser) return res.status(404).send({ status: false, message: "No user Found With The Input Credentials, Please Confirm The Credentials" });
+//     const token = jwt.sign({ userId: loggedInUser._id }, "project36", { expiresIn: '1h' });
+//     const data = {_id, token}
+//     return res.status(200).send({ status: true, message: "Success", data: data })
+// }
+
+const loginUser = async function(req,res){
+    try{
+        let data = req.body;
+
+        if (!isValidRequest(data))
+          return res
+            .status(400)
+            .send({
+              status: false,
+              msg: "Please Prove email and passworrd to login",
+            });
+        let { email, password } = data;
+        //validation for email
+        if(!isValid(email) || !isValid(password))
+        return res
+          .status(400)
+          .send({ status: false, message: "Credential must be present" });
+
+        //find Email in Db
+        let user = await userModel.findOne({email: email});
+        if(!user){
+            return res.status(400).send({ status: false, message: "Credential is not correct", });
+        }
+        let isValidPassword = bcrypt.compare(password.trim(),user.password);
+        if(!isValidPassword){
+            return res
+              .status(400)
+              .send({ status: false, message: "Password is not correct" });
+        }
 
 
-const loginUser = async (req, res) => {
-    const user = req.body;
-    if (Object.keys(user).length === 0) return res.status(400).send({ status: false, message: "enter a field to login" });
+        //token genration
+        let token = jwt.sign({
+            userId : user._id.toString(),
+            batch : "plutonium",
+            organization : "functionup"
+        },
+        "project5-group36",{
+            'expiresIn': '24h'
+        });
 
-    const { email, password } = user
+        const finalData = {
+            userId : user._id,
+            token : token,
+        }
 
-    if (!isvalidEmail.test(email)) return res.status(400).send({ status: false, message: "email must be present and valid" });
-    //if (!checkPassword.test(password)) return res.status(400).send({ status: false, message: "Please Enter Your Password" });
+        res.status(200).send({status:false,message: "User login successfull", data: finalData })
+        
+    }catch(err){console.log(err.message)}
+    
 
-    const loggedInUser = await userModel.findOne({ email: email, password: password })
-    const {_id} = loggedInUser
-    if (!loggedInUser) return res.status(404).send({ status: false, message: "No user Found With The Input Credentials, Please Confirm The Credentials" });
-    const token = jwt.sign({ userId: loggedInUser._id }, "project36", { expiresIn: '1h' });
-    const data = {_id, token}
-    return res.status(200).send({ status: true, message: "Success", data: data })
 }
 
 module.exports = { loginUser, getUserById };
