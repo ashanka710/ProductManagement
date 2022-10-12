@@ -17,6 +17,10 @@ mongoose.connect(url)
 
 app.use('/', route);
 
+app.use(function(req, res){
+    return res.status(400).send({ status: false, message: "Path not found, please provide correct path"})
+})
+
 app.listen(port, function (req, res) {
     console.log('Express app running on port ' + port)
 })
