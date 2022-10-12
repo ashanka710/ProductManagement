@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const { uploadFile } = require("../utils/aws");
 const userModel = require('../models/userModel')
-const { nameRegex, addressValid, mailRegex, mobileRegex, passwordRegex, pinValid, imageValid, } = require('../validators/validator')
+const { nameRegex, addressValid, mailRegex, mobileRegex, passwordRegex, pinValid, imageValid, } = require('./validator')
 
 const userValidation = async (req, res, next) => {
   try {

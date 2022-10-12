@@ -6,7 +6,7 @@ const { isvalidEmail, checkPassword} = require('../validators/validator')
 
 const register = async (req, res) => {
   try {
-    let data = req.data
+    const data = req.data
   
     const saveData = await userModel.create(data);
     return res.status(201).send({ status: true, msg: "User created successfully", data: saveData });
