@@ -2,8 +2,10 @@ const express = require("express");
 const mongoose = require("mongoose");
 const route = require("./routes/route");
 const app = express();
+const multer = require('multer')
 
 app.use(express.json());
+app.use(multer().any())
 app.use(express.urlencoded({ extended: true }));
 
 const port = process.env.PORT || 3000;
