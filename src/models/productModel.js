@@ -19,12 +19,14 @@ const productSchema = new mongoose.Schema(
         },
         currencyId: {
             type: String,
-            required: true
+            required: true,
+            trim: true
         },
         currencyFormat: {
             type: String,
             default: "₹",
-            required: true
+            required: true,
+            trim: true
         },
         isFreeShipping: {
             type: Boolean,
@@ -32,10 +34,12 @@ const productSchema = new mongoose.Schema(
         },
         productImage: {
             type: String,
-            required: true
+            required: true,
+            trim: true
         },
         style: {
-            type: String
+            type: String,
+            trim: true
         },
         availableSizes: {
             type: [String],

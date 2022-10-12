@@ -22,6 +22,8 @@ const addressValid = (value) => {
     let streetRegex = /^[#.0-9a-zA-Z\s,-]+$/;
     if (streetRegex.test(value)) return true;
   };
+
+  const installmentsRegex = /^[+-]?((\d+(\\d*)?)|(\\d+))$/
   
   const mobileRegex = (value) => {
     let phoneRegex =
@@ -51,7 +53,7 @@ const addressValid = (value) => {
   }
   
   const isValidSizes = (size) => {
-    const validSize = size.split(",").map((x) => x.trim());
+    const validSize = size.map((x) => x.trim());
     let givenSizes = ["S", "XS", "M", "X", "L", "XXL", "XL"];
     for (let i = 0; i < validSize.length; i++) {
       if (!givenSizes.includes(validSize[i])) {
@@ -80,7 +82,8 @@ module.exports = {
     isvalidEmail, 
     checkPassword, 
     validateObjectId, 
-    stringChecking, 
+    stringChecking,
+    installmentsRegex,
     addressValid, 
     nameRegex,
     addressValid,
