@@ -1,4 +1,6 @@
 const productModel = require('../models/productModel')
+const {validateObjectId} = require('../validators/validator')
+
 const getproductById = async function(req, res) {
     try {
         let productId = req.qurey.productId
@@ -27,4 +29,19 @@ const productsListing = async(req, res) => {
 }
 
 
-module.exports = { productsListing, getproductById }
+const deleteProduct = async (req, res) => {
+    const productId = req.params.productId
+
+    if(!validateObjectId(productId)) return res.status(400).send({ status: false, message: "productId must be present and valid"})
+
+    const product = await productModel.findById(productId)
+    if(!product) return res.status(404).send({status: false, message: "No product found"})
+    if(product.isDeleted === true) return res.status(400).send({ status: false, message: "product is already deleted"})
+    
+    product.isDeleted = true
+    await product.save()
+    return res.status(200).send({status: true, message: "Product is successfully deleted"})
+}
+
+
+module.exports = { productsListing, getproductById, deleteProduct }
