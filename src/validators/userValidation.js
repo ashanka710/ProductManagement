@@ -93,16 +93,16 @@ const updateValidation = async (req, res, next) => {
     const filter = {}
 
     if (data.fname) {
-      if (!nameRegex(data.fname)) return res.status(400).send({ status: false, msg: "fname must be present and in correct format" });
+      if (!nameRegex(data.fname)) return res.status(400).send({ status: false, msg: "fname must be in correct format" });
       filter.fname = data.fname
     }
 
     if (data.lname) {
-      if (!nameRegex(data.lname)) return res.status(400).send({ status: false, msg: "lname must be present and in correct format" });
+      if (!nameRegex(data.lname)) return res.status(400).send({ status: false, msg: "lname must be in correct format" });
       filter.lname = data.lname
     }
     if (data.email) {
-      if (!mailRegex(data.email)) return res.status(400).send({ status: false, msg: "email must be present and valid" });
+      if (!mailRegex(data.email)) return res.status(400).send({ status: false, msg: "email must be valid" });
       const checkUser = await userModel.findOne({ email: data.email });
       if (checkUser) return res.status(400).send({ status: false, msg: "EmailId already taken" });
       filter.email = data.email
@@ -116,7 +116,7 @@ const updateValidation = async (req, res, next) => {
     }
 
     if (data.password) {
-      if (!passwordRegex(data.password)) return res.status(400).send({ status: false, msg: "Password must be present in between 8 to 15 mixed with upper, lower and symbol letter" });
+      if (!passwordRegex(data.password)) return res.status(400).send({ status: false, msg: "Password is in between 8 to 15 mixed with upper, lower and symbol letter" });
       const encryptedPass = await bcrypt.hash(data.password, 10); //encrypting password
       filter.password = encryptedPass;
     }
@@ -126,45 +126,46 @@ const updateValidation = async (req, res, next) => {
       if (typeof data.address !== "object") return res.status(400).send({ status: false, message: "address must be in an object form" })
 
       if (data.address.shipping) {
-        if (typeof data.address.shipping !== "object") return res.status(400).send({ status: false, msg: "shipping must be present and an object" });
+        if (typeof data.address.shipping !== "object") return res.status(400).send({ status: false, msg: "shipping must be  an object" });
 
         if (data.address.shipping.street) {
-          if (!addressValid(data.address.shipping.street)) return res.status(400).send({ status: false, msg: "shipping street must be present and in correct format" });
+          if (!addressValid(data.address.shipping.street)) return res.status(400).send({ status: false, msg: "shipping street must be in correct format" });
           filter["address.shipping.street"] = data.address.shipping.street
         }
 
         if (data.address.shipping.city) {
-          if (!nameRegex(data.address.shipping.city)) return res.status(400).send({ status: false, msg: "shipping city must be present and in correct format" });
+          if (!nameRegex(data.address.shipping.city)) return res.status(400).send({ status: false, msg: "shipping city must be  in correct format" });
           filter["address.shipping.city"] = data.address.shipping.city
         }
 
         if (data.address.shipping.pincode) {
-          if (!pinValid(data.address.shipping.pincode)) return res.status(400).send({ status: false, msg: "shipping pincode must be present and valid" });
+          if (!pinValid(data.address.shipping.pincode)) return res.status(400).send({ status: false, msg: "shipping pincode must be valid" });
           filter["address.shipping.pincode"] = data.address.shipping.pincode
         }
 
       }
 
       if (data.address.billing) {
-        if (typeof data.address.billing !== "object") return res.status(400).send({ status: false, msg: "billing must be present and an object" });
+        if (typeof data.address.billing !== "object") return res.status(400).send({ status: false, msg: "billing must be an object" });
 
         if (data.address.billing.street) {
-          if (!addressValid(data.address.billing.street)) return res.status(400).send({ status: false, msg: "billing street must be present and in correct format" });
+          if (!addressValid(data.address.billing.street)) return res.status(400).send({ status: false, msg: "billing street must be  in correct format" });
           filter["address.billing.street"] = data.address.billing.street
         }
 
         if (data.address.billing.city) {
-          if (!nameRegex(data.address.billing.city)) return res.status(400).send({ status: false, msg: "billing city must be present and in correct format" });
+          if (!nameRegex(data.address.billing.city)) return res.status(400).send({ status: false, msg: "billing city must be  in correct format" });
           filter["address.billing.city"] = data.address.billing.city
         }
 
         if (data.address.billing.pincode) {
-          if (!pinValid(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: "billing pincode must be present and valid" });
+          if (!pinValid(data.address.billing.pincode)) return res.status(400).send({ status: false, msg: "billing pincode must be valid" });
           filter["address.billing.pincode"] = data.address.billing.pincode
         }
 
       }
     }
+    if(files && files.length === 0) return res.status(400).send({ status: false, msg: "files can't be empty" });
     if (files && files.length > 0) {
       let uploadedFileURL = await uploadFile(files[0])
       filter.profileImage = uploadedFileURL

@@ -1,24 +1,6 @@
 const productModel = require('../models/productModel')
 const {validateObjectId} = require('../validators/validator')
 
-const getproductById = async function(req, res) {
-    try {
-        let productId = req.qurey.productId
-        if (!productId) return res.status(400).send({ status: false, message: "ProductId is required" })
-        if (!isValid(productId)) return res.status(400).send({ status: false, message: "ProductId is required" })
-        if (!productId.match(ObjectId)) return res.status(400).send({ status: false, message: "ProductId is required" })
-        let product = productModel.findById(productId)
-        if (product || product.isDeleted == true)
-            return res.status(404).send({ status: false, message: "Product not found" })
-        return res.status(200).send({ status: true, message: 'Success', data: product })
-    } catch (error) {
-        return res.status(500).send({ status: false, message: error.message })
-    }
-}
-
-
-
-
 
 
 const productsListing = async(req, res) => {
@@ -28,6 +10,21 @@ const productsListing = async(req, res) => {
     return res.status(201).send({ status: false, message: "Product created successfully", data: products })
 }
 
+const getproductById = async function(req, res) {
+    try {
+        const productId = req.params.productId
+
+        if (!productId) return res.status(400).send({ status: false, message: "productId is required" })
+        if (!validateObjectId(productId)) return res.status(400).send({ status: false, message: "productId must be valid" })
+  
+        const product = productModel.findById(productId)
+        if (!product || product.isDeleted == true) return res.status(404).send({ status: false, message: "product not found" })
+        
+        return res.status(200).send({ status: true, message: 'Success', data: product })
+    } catch (error) {
+        return res.status(500).send({ status: false, message: error.message })
+    }
+}
 
 const deleteProduct = async (req, res) => {
     const productId = req.params.productId
