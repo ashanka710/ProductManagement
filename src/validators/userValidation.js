@@ -165,7 +165,6 @@ const updateValidation = async (req, res, next) => {
 
       }
     }
-    if(files && files.length === 0) return res.status(400).send({ status: false, msg: "files can't be empty" });
     if (files && files.length > 0) {
       let uploadedFileURL = await uploadFile(files[0])
       filter.profileImage = uploadedFileURL
