@@ -17,7 +17,7 @@ const getproductById = async function(req, res) {
         if (!productId) return res.status(400).send({ status: false, message: "productId is required" })
         if (!validateObjectId(productId)) return res.status(400).send({ status: false, message: "productId must be valid" })
   
-        const product = productModel.findById(productId)
+        const product = await productModel.findById(productId)
         if (!product || product.isDeleted == true) return res.status(404).send({ status: false, message: "product not found" })
         
         return res.status(200).send({ status: true, message: 'Success', data: product })

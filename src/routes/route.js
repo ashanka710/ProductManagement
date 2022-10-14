@@ -14,9 +14,9 @@ router.post('/register', userValidation, register)
 router.post('/login', loginUser)
 router.get('/user/:userId/profile', authentication, authorization, getUserById)
 router.put('/user/:userId/profile', authentication, authorization, updateValidation, updateUser)
-router.get('/products/:productId', getproductById)
 
 router.post('/products', productValidation, productsListing)
+router.get('/products/:productId', getproductById)
 router.delete('/products/:productId', deleteProduct)
 
 module.exports = router
