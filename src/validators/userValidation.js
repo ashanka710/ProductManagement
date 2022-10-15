@@ -74,9 +74,13 @@ const userValidation = async (req, res, next) => {
     }
     req.data = data
     next()
-  } catch (error) {
-    return res.status(500).send({ status: false, message: error.message })
-  }
+  } catch (e) {
+    if (e instanceof SyntaxError) {
+     return res.status(400).send({ status: false, message: "pincode or any number can't start with leading 0 when parsing JSON" })
+   } else {
+     return res.status(500).send({ status: false, message: e.message }) 
+   }
+ }
 
 }
 
@@ -86,6 +90,7 @@ const updateValidation = async (req, res, next) => {
     const data = req.body
     const files = req.files;
 
+    if(!validateObjectId(userId)) return res.status(400).send({ status: false, message: "userId is not valid" })
     const user = await userModel.findById(userId)
     if (!user) return res.status(400).send({ status: false, message: "User not found" })
     if (Object.keys(data).length === 0 && !files) return res.status(400).send({ status: false, message: "Please provide field to update" })
@@ -120,7 +125,7 @@ const updateValidation = async (req, res, next) => {
       const encryptedPass = await bcrypt.hash(data.password, 10); //encrypting password
       filter.password = encryptedPass;
     }
-
+    
     if (data.address) {
       data.address = JSON.parse(data.address)
       if (typeof data.address !== "object") return res.status(400).send({ status: false, message: "address must be in an object form" })
@@ -171,8 +176,12 @@ const updateValidation = async (req, res, next) => {
     }
     req.filter = filter
     next()
-  } catch (error) {
-    return res.status(500).send({ status: false, message: error.message })
+  } catch (e) {
+     if (e instanceof SyntaxError) {
+      return res.status(400).send({ status: false, message: "pincode or any number can't start with leading 0 when parsing JSON" })
+    } else {
+      return res.status(500).send({ status: false, message: e.message }) 
+    }
   }
 }
 

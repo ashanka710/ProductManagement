@@ -1,3 +1,5 @@
+const { connections } = require("mongoose");
+
 const isvalidEmail = /^\s*[a-zA-Z0-9]+([\.\-\_\+][a-zA-Z0-9]+)*@[a-zA-Z]+([\.\-\_][a-zA-Z]+)*(\.[a-zA-Z]{2,3})+\s*$/
 
 const checkPassword = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/;
@@ -53,10 +55,9 @@ const addressValid = (value) => {
   }
   
   const isValidSizes = (size) => {
-    const validSize = size.map((x) => x.trim());
-    let givenSizes = ["S", "XS", "M", "X", "L", "XXL", "XL"];
-    for (let i = 0; i < validSize.length; i++) {
-      if (!givenSizes.includes(validSize[i])) {
+    const givenSizes = ["S", "XS", "M", "X", "L", "XXL", "XL"];
+    for (let i = 0; i < size.length; i++) {
+      if (!givenSizes.includes(size[i])) {
         return false;
       }
     }
