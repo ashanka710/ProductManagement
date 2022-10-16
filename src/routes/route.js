@@ -8,7 +8,7 @@ const { userValidation, updateValidation } = require('../validators/userValidati
 
 const { productsListing, getproductById, updateProduct, deleteProduct, getProductDetails } = require('../controllers/productController')
 const { productValidation, pUpdateValidation } = require('../validators/productValidation')
-
+const { getCart, deleteCart } = require("../controllers/cartController")
 
 router.post('/register', userValidation, register)
 router.post('/login', loginUser)
@@ -19,6 +19,15 @@ router.post('/products', productValidation, productsListing)
 router.get('/products/:productId', getproductById)
 router.put('/products/:productId', pUpdateValidation, updateProduct)
 router.delete('/products/:productId', deleteProduct)
-router.get('/products',getProductDetails)
+router.get('/products', getProductDetails)
 
+
+
+
+
+router.get("/users/:userId/cart", getCart);
+router.delete("/users/:userId/cart",
+
+    deleteCart
+);
 module.exports = router
