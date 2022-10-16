@@ -1,7 +1,7 @@
 const bcrypt = require('bcrypt')
 const { uploadFile } = require("../utils/aws");
 const userModel = require('../models/userModel')
-const { nameRegex, addressValid, mailRegex, mobileRegex, passwordRegex, pinValid, imageValid, } = require('./validator')
+const { nameRegex, addressValid, mailRegex, mobileRegex, passwordRegex, pinValid, imageValid, validateObjectId} = require('./validator')
 
 const userValidation = async (req, res, next) => {
   try {
@@ -66,6 +66,7 @@ const userValidation = async (req, res, next) => {
 
     //validation for product Image
     if (files && files.length > 0) {
+      if (!imageValid(files[0].mimetype)) return res.status(400).send({ status: false, message: "Image Should be of JPEG/ JPG/ PNG" })
       let uploadedFileURL = await uploadFile(files[0])
       data.profileImage = uploadedFileURL
     }
@@ -171,6 +172,7 @@ const updateValidation = async (req, res, next) => {
       }
     }
     if (files && files.length > 0) {
+      if (!imageValid(files[0].mimetype)) return res.status(400).send({ status: false, message: "Image Should be of JPEG/ JPG/ PNG" })
       let uploadedFileURL = await uploadFile(files[0])
       filter.profileImage = uploadedFileURL
     }

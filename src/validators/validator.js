@@ -1,5 +1,3 @@
-const { connections } = require("mongoose");
-
 const isvalidEmail = /^\s*[a-zA-Z0-9]+([\.\-\_\+][a-zA-Z0-9]+)*@[a-zA-Z]+([\.\-\_][a-zA-Z]+)*(\.[a-zA-Z]{2,3})+\s*$/
 
 const checkPassword = /^(?=.*\d)(?=.*[!@#$%^&*])(?=.*[a-z])(?=.*[A-Z]).{8,15}$/;
@@ -49,10 +47,10 @@ const addressValid = (value) => {
     if (pinregex.test(value)) return true;
   }
   
-  const imageValid = (value) => {
-    let imageRegex = /(\/*\.(?:png|gif|webp|jpeg|jpg))/;
-    if (imageRegex.test(value)) return true;
-  }
+  const imageValid = (img) => {
+    const reg = /image\/png|image\/jpeg|image\/jpg/;
+    return reg.test(img);
+  };
   
   const isValidSizes = (size) => {
     const givenSizes = ["S", "XS", "M", "X", "L", "XXL", "XL"];

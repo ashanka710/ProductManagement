@@ -1,5 +1,5 @@
 const productModel = require('../models/productModel')
-const { stringChecking, isValidSizes, installmentsRegex, validateObjectId } = require('./validator')
+const { stringChecking, isValidSizes, installmentsRegex, validateObjectId, alphaNumericValid } = require('./validator')
 const { uploadFile } = require("../utils/aws");
 
 const productValidation = async (req, res, next) => {
@@ -9,7 +9,7 @@ const productValidation = async (req, res, next) => {
 
         const { title, description, currencyId, currencyFormat } = data
 
-        if (!stringChecking(title)) return res.status(400).send({ status: false, message: "title must be present and non empty string" })
+        if (!alphaNumericValid(title)) return res.status(400).send({ status: false, message: "title must be present and non empty string" })
         const checkingTitle = await productModel.findOne({ title: title })
         if (checkingTitle) return res.status(400).send({ status: false, message: "title must be unique" })
 
@@ -31,11 +31,11 @@ const productValidation = async (req, res, next) => {
         }
 
         if (data.style) {
-            if (!stringChecking(data.style)) return res.status(400).send({ status: false, message: "style should be in string only" })
+            if (!alphaNumericValid(data.style)) return res.status(400).send({ status: false, message: "style should be in string only" })
         }
 
         if (data.availableSizes) {
-            data.availableSizes  = data.availableSizes.split(",").map((x) => x.trim().toUpperCase());
+            data.availableSizes = data.availableSizes.split(",").map((x) => x.trim().toUpperCase());
             if (!isValidSizes(data.availableSizes)) return res.status(400).send({ status: false, message: `availableSizes should be only ["S", "XS", "M", "X", "L", "XXL", "XL"] ` })
         }
 
@@ -47,6 +47,7 @@ const productValidation = async (req, res, next) => {
         data.isDeleted = false
 
         if (files && files.length > 0) {
+            if (!imageValid(files[0].mimetype)) return res.status(400).send({ status: false, message: "Image Should be of JPEG/ JPG/ PNG" })
             let uploadedFileURL = await uploadFile(files[0])
             data.productImage = uploadedFileURL
         }
@@ -55,13 +56,13 @@ const productValidation = async (req, res, next) => {
         }
         req.data = data
         next()
-    }  catch (e) {
+    } catch (e) {
         if (e instanceof SyntaxError) {
-         return res.status(400).send({ status: false, message: "number can't start with leading 0 when parsing JSON" })
-       } else {
-         return res.status(500).send({ status: false, message: e.message }) 
-       }
-     }
+            return res.status(400).send({ status: false, message: "number can't start with leading 0 when parsing JSON" })
+        } else {
+            return res.status(500).send({ status: false, message: e.message })
+        }
+    }
 }
 
 const pUpdateValidation = async (req, res, next) => {
@@ -72,15 +73,15 @@ const pUpdateValidation = async (req, res, next) => {
 
         const { title, description, currencyId, currencyFormat } = data
 
-        if(!validateObjectId(productId)) return res.status(400).send({ status: false, message: "productId is not valid" })
+        if (!validateObjectId(productId)) return res.status(400).send({ status: false, message: "productId is not valid" })
 
         const product = await productModel.findOne({ _id: productId, isDeleted: false })
-        if(!product) return res.status(404).send({ status: false, message: "product not found" })
+        if (!product) return res.status(404).send({ status: false, message: "product not found" })
 
         if (Object.keys(data).length === 0 && !files) return res.status(400).send({ status: false, message: "Please provide field to update" })
 
         if (title) {
-            if (!stringChecking(title)) return res.status(400).send({ status: false, message: "title must be present and non empty string" })
+            if (!alphaNumericValid(title)) return res.status(400).send({ status: false, message: "title must be present and non empty string" })
             const checkingTitle = await productModel.findOne({ title: title })
             if (checkingTitle) return res.status(400).send({ status: false, message: "title must be unique" })
         }
@@ -111,11 +112,11 @@ const pUpdateValidation = async (req, res, next) => {
 
 
         if (data.style) {
-            if (!stringChecking(data.style)) return res.status(400).send({ status: false, message: "style should be in string only" })
+            if (!alphaNumericValid(data.style)) return res.status(400).send({ status: false, message: "style should be in string only" })
         }
 
         if (data.availableSizes) {
-            data.availableSizes  = data.availableSizes.split(",").map((x) => x.trim().toUpperCase());
+            data.availableSizes = data.availableSizes.split(",").map((x) => x.trim().toUpperCase());
             if (!isValidSizes(data.availableSizes)) return res.status(400).send({ status: false, message: `availableSizes should be only ["S", "XS", "M", "X", "L", "XXL", "XL"] ` })
         }
 
@@ -127,18 +128,19 @@ const pUpdateValidation = async (req, res, next) => {
         data.isDeleted = false
 
         if (files && files.length > 0) {
+            if (!imageValid(files[0].mimetype)) return res.status(400).send({ status: false, message: "Image Should be of JPEG/ JPG/ PNG" })
             let uploadedFileURL = await uploadFile(files[0])
             data.productImage = uploadedFileURL
         }
         req.data = data
         next()
-    }  catch (e) {
+    } catch (e) {
         if (e instanceof SyntaxError) {
-         return res.status(400).send({ status: false, message: "number can't start with leading 0 when parsing JSON" })
-       } else {
-         return res.status(500).send({ status: false, message: e.message }) 
-       }
-     }
+            return res.status(400).send({ status: false, message: "number can't start with leading 0 when parsing JSON" })
+        } else {
+            return res.status(500).send({ status: false, message: e.message })
+        }
+    }
 }
 
 
