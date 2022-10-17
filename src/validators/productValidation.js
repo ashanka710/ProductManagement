@@ -1,5 +1,5 @@
 const productModel = require('../models/productModel')
-const { stringChecking, isValidSizes, installmentsRegex, validateObjectId, alphaNumericValid } = require('./validator')
+const { stringChecking, isValidSizes, installmentsRegex, validateObjectId, imageValid, alphaNumericValid, numRegex } = require('./validator')
 const { uploadFile } = require("../utils/aws");
 
 const productValidation = async (req, res, next) => {
@@ -15,9 +15,10 @@ const productValidation = async (req, res, next) => {
 
         if (!stringChecking(description)) return res.status(400).send({ status: false, message: "description must be present and non empty string" })
 
-        if (!data.price) return res.status(400).send({ status: false, message: "price must be present" })
+        if (!numRegex.test(data.price)) return res.status(400).send({ status: false, message: "price must be present and non empty number" })
         data.price = JSON.parse(data.price)
-        if (typeof data.price !== "number") return res.status(400).send({ status: false, message: "price must be present and non empty number" })
+        data.price = Math.round(data.price * 100) / 100
+
 
         if (typeof currencyId != "string" || currencyId !== "INR") return res.status(400).send({ status: false, message: "currencyId must be present and only INR" })
 
@@ -30,18 +31,18 @@ const productValidation = async (req, res, next) => {
             data.isFreeShipping = false
         }
 
-        if (data.style) {
+        if (data.style || (!data.style && data.style != undefined)) {
             if (!alphaNumericValid(data.style)) return res.status(400).send({ status: false, message: "style should be in string only" })
         }
 
-        if (data.availableSizes) {
-            data.availableSizes = data.availableSizes.split(",").map((x) => x.trim().toUpperCase());
-            if (!isValidSizes(data.availableSizes)) return res.status(400).send({ status: false, message: `availableSizes should be only ["S", "XS", "M", "X", "L", "XXL", "XL"] ` })
-        }
+        if (!data.availableSizes || data.availableSizes.length === 0) return res.status(400).send({ status: false, message: "Please provide at least one size" })
+        data.availableSizes = data.availableSizes.split(",").map((x) => x.trim().toUpperCase());
+        if (!isValidSizes(data.availableSizes)) return res.status(400).send({ status: false, message: `availableSizes should be only ["S", "XS", "M", "X", "L", "XXL", "XL"] ` })
 
-        if (data.installments) {
+
+        if (data.installments || (!data.installments && data.installments != undefined)) {
+            if (!installmentsRegex.test(data.installments)) return res.status(400).send({ status: false, message: "installments should be in positive whole number only" })
             data.installments = JSON.parse(data.installments)
-            if (!installmentsRegex.test(data.installments)) return res.status(400).send({ status: false, message: "installments should be in number only" })
         }
 
         data.isDeleted = false
@@ -71,7 +72,7 @@ const pUpdateValidation = async (req, res, next) => {
         const files = req.files
         const productId = req.params.productId
 
-        const { title, description, currencyId, currencyFormat } = data
+        const { title, description, currencyId, currencyFormat, availableSizes } = data
 
         if (!validateObjectId(productId)) return res.status(400).send({ status: false, message: "productId is not valid" })
 
@@ -80,27 +81,28 @@ const pUpdateValidation = async (req, res, next) => {
 
         if (Object.keys(data).length === 0 && !files) return res.status(400).send({ status: false, message: "Please provide field to update" })
 
-        if (title) {
-            if (!alphaNumericValid(title)) return res.status(400).send({ status: false, message: "title must be present and non empty string" })
+        if (title || (!title && title != undefined)) {
+            if (!alphaNumericValid(title)) return res.status(400).send({ status: false, message: "title must be non empty string" })
             const checkingTitle = await productModel.findOne({ title: title })
             if (checkingTitle) return res.status(400).send({ status: false, message: "title must be unique" })
         }
 
-        if (description) {
-            if (!stringChecking(description)) return res.status(400).send({ status: false, message: "description must be present and non empty string" })
+        if (description || (!description && description != undefined)) {
+            if (!stringChecking(description)) return res.status(400).send({ status: false, message: "description must be non empty string" })
         }
 
-        if (data.price) {
+        if (data.price || (!data.price && data.price != undefined)) {
+            if (!numRegex.test(data.price)) return res.status(400).send({ status: false, message: "price must be non empty number" })
             data.price = JSON.parse(data.price)
-            if (typeof data.price !== "number") return res.status(400).send({ status: false, message: "price must be present and non empty number" })
+            data.price = Math.round(data.price * 100) / 100
         }
 
-        if (currencyId) {
-            if (typeof currencyId != "string" || currencyId !== "INR") return res.status(400).send({ status: false, message: "currencyId must be present and only INR" })
+        if (currencyId || (!currencyId && currencyId != undefined)) {
+            if (typeof currencyId != "string" || currencyId !== "INR") return res.status(400).send({ status: false, message: "currencyId must be only INR" })
         }
 
-        if (currencyFormat) {
-            if (typeof currencyFormat != "string" || currencyFormat !== "₹") return res.status(400).send({ status: false, message: "currencyFormat must be present and only ₹" })
+        if (currencyFormat || (!currencyFormat && currencyFormat != undefined)) {
+            if (typeof currencyFormat != "string" || currencyFormat !== "₹") return res.status(400).send({ status: false, message: "currencyFormat must be only ₹" })
         }
 
         if (data.isFreeShipping) {
@@ -111,18 +113,20 @@ const pUpdateValidation = async (req, res, next) => {
         }
 
 
-        if (data.style) {
+        if (data.style || (!data.style && data.style != undefined)) {
             if (!alphaNumericValid(data.style)) return res.status(400).send({ status: false, message: "style should be in string only" })
         }
 
-        if (data.availableSizes) {
+        if (availableSizes || (!availableSizes && availableSizes != undefined)) {
+            if (!availableSizes || availableSizes.length === 0) return res.status(400).send({ status: false, message: "Please provide at least one size" })
             data.availableSizes = data.availableSizes.split(",").map((x) => x.trim().toUpperCase());
             if (!isValidSizes(data.availableSizes)) return res.status(400).send({ status: false, message: `availableSizes should be only ["S", "XS", "M", "X", "L", "XXL", "XL"] ` })
         }
 
-        if (data.installments) {
+
+        if (data.installments || (!data.installments && data.installments != undefined)) {
+            if (!installmentsRegex.test(data.installments)) return res.status(400).send({ status: false, message: "installments should be in positive whole number only" })
             data.installments = JSON.parse(data.installments)
-            if (!installmentsRegex.test(data.installments)) return res.status(400).send({ status: false, message: "installments should be in number only" })
         }
 
         data.isDeleted = false

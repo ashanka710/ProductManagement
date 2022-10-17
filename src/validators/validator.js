@@ -23,7 +23,9 @@ const addressValid = (value) => {
     if (streetRegex.test(value)) return true;
   };
 
-  const installmentsRegex = /^[+-]?((\d+(\\d*)?)|(\\d+))$/
+  const installmentsRegex = /^[+]?((\d+(\\d*)?)|(\\d+))$/
+
+  const numRegex = /^[+]?([0-9]+(?:[\.][0-9]*)?|\.[0-9]+)$/
   
   const mobileRegex = (value) => {
     let phoneRegex =
@@ -63,8 +65,9 @@ const addressValid = (value) => {
   }
   
   const alphaNumericValid = (value) => {
+    if(!value) return false
     let alphaRegex = /^[a-zA-Z0-9-_ ]+$/;
-    if (alphaRegex.test(value)) return true; // /^[- a-zA-Z'\.,][^/]{1,150}/ allows every things
+    if (alphaRegex.test(value)) return true
   }
   
   const isValidremoveProduct = function (value) {
@@ -72,6 +75,9 @@ const addressValid = (value) => {
   }
 
 const nameRegex = (value) => {
+    if(!value) return false
+    value = value.toLowerCase()
+    if(value == "true" || value == "false") return false
     let nameRegex = /^[A-Za-z\s]{1,}[\.]{0,1}[A-Za-z\s]{0,}$/;
     if (nameRegex.test(value)) return true;
   };
@@ -83,6 +89,7 @@ module.exports = {
     validateObjectId, 
     stringChecking,
     installmentsRegex,
+    numRegex,
     addressValid, 
     nameRegex,
     addressValid,

@@ -21,7 +21,7 @@ const userValidation = async (req, res, next) => {
     if (checkUser) return res.status(400).send({ status: false, msg: "EmailId already taken" });
 
     //Validation for Phone Number
-    if (!mobileRegex(phone)) return res.status(400).send({ status: false, msg: "Please give only valid Indian phone number" });
+    if (!mobileRegex(phone)) return res.status(400).send({ status: false, msg: "phone must be present and only valid Indian phone number" });
     const checkphone = await userModel.findOne({ phone: phone });
     if (checkphone) return res.status(400).send({ status: false, msg: "Phone Number is already taken" });
 
