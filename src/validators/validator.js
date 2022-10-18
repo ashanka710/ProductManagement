@@ -70,9 +70,6 @@ const alphaNumericValid = (value) => {
     if (alphaRegex.test(value)) return true
 }
 
-const isValidremoveProduct = function(value) {
-    return ['0', '1'].indexOf(value) !== -1;
-}
 
 const nameRegex = (value) => {
     if (!value) return false
@@ -99,6 +96,5 @@ module.exports = {
     pinValid,
     imageValid,
     isValidSizes,
-    alphaNumericValid,
-    isValidremoveProduct
+    alphaNumericValid
 }
