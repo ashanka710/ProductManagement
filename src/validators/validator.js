@@ -71,7 +71,7 @@ const addressValid = (value) => {
   }
   
   const isValidremoveProduct = function (value) {
-    return [0, 1].indexOf(value) !== -1;
+    return ['0', '1'].indexOf(value) !== -1;
   }
 
 const nameRegex = (value) => {
