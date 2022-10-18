@@ -8,7 +8,7 @@ const createCart = async(req, res) => {
             const userId = req.params.userId
             const data = req.body
 
-            const { cartId, productId } = data
+            const { cartId, productId, quantity } = data
 
 
             if (!productId || !validateObjectId(productId)) return res.status(404).send({ status: false, message: "productId must be present and valid" })
@@ -29,9 +29,9 @@ const createCart = async(req, res) => {
                     userId: userId,
                     items: [{
                         productId: productId,
-                        quantity: 1
+                        quantity: (quantity || 1)
                     }],
-                    totalPrice: product.price,
+                    totalPrice: (quantity || 1) * product.price,
                     totalItems: 1,
                 })
                 await cart.save()
@@ -39,15 +39,15 @@ const createCart = async(req, res) => {
             } else {
                 for (let i = 0; i < cart.items.length; i++) {
                     if (cart.items[i].productId == productId) {
-                        cart.items[i].quantity += 1
-                        cart.totalPrice += product.price
+                        cart.items[i].quantity += (quantity || 1)
+                        cart.totalPrice += (quantity || 1) * product.price
                         await cart.save()
                         return res.status(200).send({ status: true, message: "product added in cart", data: cart })
                     }
                 }
                 const pushedCart = await cartModel.findOneAndUpdate({ _id: cartId }, {
-                    $push: { "items": { productId: productId, quantity: 1 } },
-                    $inc: { totalItems: 1, "totalPrice": product.price }
+                    $push: { "items": { productId: productId, quantity: (quantity || 1) } },
+                    $inc: { totalItems: 1, "totalPrice": (quantity || 1) * product.price }
                 }, { new: true })
                 return res.status(201).send({ status: true, message: "product pushed in cart", data: pushedCart })
             }
@@ -55,6 +55,7 @@ const createCart = async(req, res) => {
             return res.status(500).send({ status: false, message: error.message })
         }
     }
+ 
     //=====================================================Update Api===================================================================>
 const updateCart = async function(req, res) {
     try {
