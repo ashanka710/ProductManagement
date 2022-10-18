@@ -4,7 +4,7 @@ const bcrypt = require('bcrypt')
 const { isvalidEmail, checkPassword, validateObjectId } = require('../validators/validator')
 
 
-const register = async (req, res) => {
+const register = async(req, res) => {
     try {
         const data = req.data
 
@@ -15,7 +15,7 @@ const register = async (req, res) => {
     }
 }
 
-const loginUser = async (req, res) => {
+const loginUser = async(req, res) => {
     try {
         const user = req.body;
         if (Object.keys(user).length === 0) return res.status(400).send({ status: false, message: "enter a field to login" });
@@ -40,7 +40,7 @@ const loginUser = async (req, res) => {
 }
 
 
-const getUserById = async (req, res) => {
+const getUserById = async(req, res) => {
     try {
         let userId = req.params.userId
 
@@ -57,12 +57,12 @@ const getUserById = async (req, res) => {
 
 
 
-const updateUser = async function (req, res) {
+const updateUser = async function(req, res) {
     try {
         const filter = req.filter
         const userId = req.params.userId
 
-        const updatedUser = await userModel.findOneAndUpdate({ _id: userId }, { ...filter }, { new: true })
+        const updatedUser = await userModel.findOneAndUpdate({ _id: userId }, {...filter }, { new: true })
         return res.status(200).send({ status: true, message: "User profile updated", data: updatedUser })
 
     } catch (error) {
