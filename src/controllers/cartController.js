@@ -8,7 +8,7 @@ const createCart = async(req, res) => {
             const userId = req.params.userId
             const data = req.body
 
-            const { cartId, productId, quantity } = data
+            let { cartId, productId, quantity } = data
 
 
             if (!productId || !validateObjectId(productId)) return res.status(404).send({ status: false, message: "productId must be present and valid" })
@@ -20,6 +20,12 @@ const createCart = async(req, res) => {
 
             const product = await productModel.findOne({ _id: productId, isDeleted: false }).select({ price: 1, _id: 0 })
             if (!product) return res.status(404).send({ status: false, message: `No product found with this id: ${productId}` })
+
+            if(quantity){
+              quantity = JSON.parse(quantity)
+              if(typeof quantity !=  "number") return res.status(400).send({status: false, message: "quantity should be in number only"})
+              quantity = Math.ceil(quantity)
+            }
 
             let cart = await cartModel.findOne({ _id: cartId })
             if (!cart) {
