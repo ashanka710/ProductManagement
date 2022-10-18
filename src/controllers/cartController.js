@@ -24,7 +24,7 @@ const createCart = async (req, res) => {
         let cart = await cartModel.findOne({ _id: cartId })
         if (!cart) {
             const user = await cartModel.findOne({ userId: userId })
-            if (user) return res.status(404).send({ status: false, message: `user id: ${userId} must be unique for creating new cart` })
+            if (user) return res.status(400).send({ status: false, message: `cart has already been created from this ${userId}, please provide cartId also` })
             cart = new cartModel({
                 userId: userId,
                 items: [{
