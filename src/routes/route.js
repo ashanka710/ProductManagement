@@ -11,6 +11,7 @@ const { createCart, updateCart, getCart, deleteCart } = require("../controllers/
 const { authentication, authorization } = require("../middelwares/auth")
 const { userValidation, updateValidation } = require('../validators/userValidation')
 const { productValidation, pUpdateValidation } = require('../validators/productValidation')
+const {orderValidation} = require('../validators/orderValidation');
 
 
 //=========================user routes================================//
@@ -33,5 +34,7 @@ router.put('/users/:userId/cart', authentication, authorization, updateCart)
 router.get("/users/:userId/cart", authentication, authorization, getCart)
 router.delete("/users/:userId/cart", authentication, authorization, deleteCart)
 
+//=========================Order routes================================//
+ router.post("/users/:userId/orders", authentication, authorization, orderValidation, createOrder);
 
 module.exports = router
