@@ -125,6 +125,7 @@ const deleteProduct = async (req, res) => {
     if (product.isDeleted === true) return res.status(400).send({ status: false, message: "product is already deleted" })
 
     product.isDeleted = true
+    product.deletedAt = Date.now()
     await product.save()
     return res.status(200).send({ status: true, message: "Product is successfully deleted" })
   } catch (error) {
