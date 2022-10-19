@@ -73,7 +73,7 @@ const updateOrder = async (req, res) => {
 
         if (!orderId || !validateObjectId(orderId)) return res.status(400).send({ status: false, message: "orderId must be present and valid" })
 
-        const order = await orderModel.findOneAndUpdate({ _id: orderId, userId: userId })
+        const order = await orderModel.findOne({ _id: orderId, userId: userId })
         if (!order) return res.status(400).send({ status: false, message: "Order doesn't belong to this user, provide correct orderId" })
 
         if (status === "cancled") {
