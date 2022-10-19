@@ -71,6 +71,8 @@ const updateOrder = async (req, res) => {
 
         if (Object.keys(data).length === 0) return res.status(400).send({ status: false, message: "Please provide field to update" })
 
+        if (!orderId || !validateObjectId(orderId)) return res.status(400).send({ status: false, message: "orderId must be present and valid" })
+
         const order = await orderModel.findOneAndUpdate({ _id: orderId, userId: userId })
         if (!order) return res.status(400).send({ status: false, message: "Order doesn't belong to this user, provide correct orderId" })
 
