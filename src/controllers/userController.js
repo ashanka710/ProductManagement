@@ -31,7 +31,7 @@ const loginUser = async(req, res) => {
         const isValidPassword = await bcrypt.compare(password.trim(), loggedInUser.password);
         if (!isValidPassword) return res.status(400).send({ status: false, message: "Password is not correct" });
 
-        const token = jwt.sign({ userId: loggedInUser._id }, "project36", { expiresIn: '1h' });
+        const token = jwt.sign({ userId: loggedInUser._id }, "project36", { expiresIn: '24h' });
         const data = { userId: loggedInUser._id, token: token }
         return res.status(200).send({ status: true, message: "Success", data: data })
     } catch (error) {
