@@ -5,13 +5,14 @@ const router = express.Router()
 const { getUserById, loginUser, register, updateUser } = require("../controllers/userController")
 const { productsListing, getproductById, updateProduct, deleteProduct, getProductDetails } = require('../controllers/productController')
 const { createCart, updateCart, getCart, deleteCart } = require("../controllers/cartController")
+const { createOrder, updateOrder } = require('../controllers/orderController')
 
 
 //=========================middlewares, validation================================//
 const { authentication, authorization } = require("../middelwares/auth")
 const { userValidation, updateValidation } = require('../validators/userValidation')
 const { productValidation, pUpdateValidation } = require('../validators/productValidation')
-const {orderValidation} = require('../validators/orderValidation');
+
 
 
 //=========================user routes================================//
@@ -35,6 +36,7 @@ router.get("/users/:userId/cart", authentication, authorization, getCart)
 router.delete("/users/:userId/cart", authentication, authorization, deleteCart)
 
 //=========================Order routes================================//
- router.post("/users/:userId/orders", authentication, authorization, orderValidation, createOrder);
+router.post("/users/:userId/orders", authentication, authorization, createOrder);
+router.put("/users/:userId/orders", authentication, authorization, updateOrder);
 
 module.exports = router
