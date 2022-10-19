@@ -136,7 +136,17 @@ const updateCart = async function (req, res) {
             $pull: { items: { productId: productId } },
             totalPrice: searchCart.totalPrice - priceChange,
             totalItems: searchCart.totalItems - 1,
-          }, { new: true });
+          }, { new: true }).populate({
+            path: "items.productId",
+            select: {
+              _id: 1,
+              title: 1,
+              description: 1,
+              price: 1,
+              productImage: 1,
+              style: 1,
+            },
+          })
           return res.status(200).send({ status: true, message: "Success", data: productRemove });
           // remove the product when its quantity is 1
         } else if (removeProduct == 1) {
@@ -145,7 +155,17 @@ const updateCart = async function (req, res) {
               $pull: { items: { productId } },
               totalPrice: searchCart.totalPrice - priceChange,
               totalItems: searchCart.totalItems - 1,
-            }, { new: true });
+            }, { new: true }).populate({
+              path: "items.productId",
+              select: {
+                _id: 1,
+                title: 1,
+                description: 1,
+                price: 1,
+                productImage: 1,
+                style: 1,
+              },
+            })
             return res.status(200).send({ status: true, message: "Success", data: priceUpdate });
           }
 
@@ -154,7 +174,17 @@ const updateCart = async function (req, res) {
           const updatedCart = await cartModel.findByIdAndUpdate({ _id: cartId }, {
             items: cart,
             totalPrice: searchCart.totalPrice - searchProduct.price,
-          }, { new: true });
+          }, { new: true }).populate({
+            path: "items.productId",
+            select: {
+              _id: 1,
+              title: 1,
+              description: 1,
+              price: 1,
+              productImage: 1,
+              style: 1,
+            },
+          })
           return res.status(200).send({ status: true, message: "Success", data: updatedCart });
         } else {
           return res.status(400).send({ status: false, message: "removeproduct must be present and valid it can be only 0 & 1" });
