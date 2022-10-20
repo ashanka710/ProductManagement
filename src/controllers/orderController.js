@@ -44,7 +44,20 @@ const createOrder = async function (req, res) {
         }
 
         // creating the order
-        const orderCreated = await orderModel.create(response)
+        const orderCreated = await (
+          (await orderModel.create(response))
+        ).populate({
+          path: "items.productId",
+          select: {
+            _id: 1,
+            title: 1,
+            description: 1,
+            price: 1,
+            productImage: 1,
+            style: 1
+          },
+        });
+        // const newVal = await orderCreated.populate()
 
         // just to update the cart DB after order is placed
         const updatedCart = await cartModel.findOneAndUpdate(
