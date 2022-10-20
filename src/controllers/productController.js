@@ -8,7 +8,7 @@ const productsListing = async (req, res) => {
     const product = req.data
 
     const products = await productModel.create(product)
-    return res.status(201).send({ status: false, message: "Product created successfully", data: products })
+    return res.status(201).send({ status: true, message: "Success", data: products })
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message })
   }
@@ -108,7 +108,7 @@ const updateProduct = async function (req, res) {
       "$addToSet": { availableSizes: product.availableSizes },
     }, { new: true })
 
-    return res.status(201).send({ status: false, message: "Product updated successfully", data: products })
+    return res.status(200).send({ status: true, message: "Product updated successfully", data: products })
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message })
   }

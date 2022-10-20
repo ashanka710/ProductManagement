@@ -52,7 +52,7 @@ const createCart = async (req, res) => {
           style: 1,
         },
       })
-      return res.status(201).send({ status: true, message: "Cart created successfully", data: resData })
+      return res.status(201).send({ status: true, message: "Success", data: resData })
     } else {
       for (let i = 0; i < cart.items.length; i++) {
         if (cart.items[i].productId == productId) {
@@ -70,7 +70,7 @@ const createCart = async (req, res) => {
               style: 1,
             },
           })
-          return res.status(201).send({ status: true, message: "product added in cart", data: resData })
+          return res.status(201).send({ status: true, message: "Success", data: resData })
         }
       }
       const pushedCart = await cartModel.findOneAndUpdate({ _id: cartId }, {
@@ -87,7 +87,7 @@ const createCart = async (req, res) => {
           style: 1,
         },
       })
-      return res.status(201).send({ status: true, message: "product pushed in cart", data: pushedCart })
+      return res.status(201).send({ status: true, message: "Success", data: pushedCart })
     }
   } catch (error) {
     return res.status(500).send({ status: false, message: error.message })
