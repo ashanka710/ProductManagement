@@ -41,7 +41,7 @@ const userValidation = async (req, res, next) => {
       if (typeof shipping !== "object") return res.status(400).send({ status: false, msg: "shipping must be present and an object" });
 
       //validation for street
-      if (!addressValid(shipping.street)) return res.status(400).send({ status: false, msg: "shipping street must be present and in correct format" });
+      if (!shipping.street || !addressValid(shipping.street)) return res.status(400).send({ status: false, msg: "shipping street must be present and in correct format" });
 
       //Validation for city
       if (!nameRegex(shipping.city)) return res.status(400).send({ status: false, msg: "shipping city must be present and in correct format" });
@@ -53,7 +53,7 @@ const userValidation = async (req, res, next) => {
       if (typeof billing !== "object") return res.status(400).send({ status: false, msg: "billing must be present and an object" });
 
       //validation for street
-      if (!addressValid(billing.street)) return res.status(400).send({ status: false, msg: "billing street must be present and in correct format" });
+      if (!billing.street || !addressValid(billing.street)) return res.status(400).send({ status: false, msg: "billing street must be present and in correct format" });
 
       //Validation for city
       if (!nameRegex(billing.city)) return res.status(400).send({ status: false, msg: "billing city must be present and in correct format" });
