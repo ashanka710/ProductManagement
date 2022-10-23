@@ -135,7 +135,7 @@ const updateValidation = async (req, res, next) => {
         if (typeof data.address.shipping !== "object") return res.status(400).send({ status: false, msg: "shipping must be  an object" });
 
         if (data.address.shipping.street) {
-          if (!addressValid(data.address.shipping.street)) return res.status(400).send({ status: false, msg: "shipping street must be in correct format" });
+          if (!addressValid(data.address.shipping.street) || !data.address.shipping.street) return res.status(400).send({ status: false, msg: "shipping street must be in correct format" });
           filter["address.shipping.street"] = data.address.shipping.street
         }
 
@@ -155,7 +155,7 @@ const updateValidation = async (req, res, next) => {
         if (typeof data.address.billing !== "object") return res.status(400).send({ status: false, msg: "billing must be an object" });
 
         if (data.address.billing.street) {
-          if (!addressValid(data.address.billing.street)) return res.status(400).send({ status: false, msg: "billing street must be  in correct format" });
+          if (!addressValid(data.address.billing.street) || !data.address.billing.street) return res.status(400).send({ status: false, msg: "billing street must be  in correct format" });
           filter["address.billing.street"] = data.address.billing.street
         }
 
