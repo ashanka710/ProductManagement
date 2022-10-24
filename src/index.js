@@ -1,3 +1,4 @@
+require('dotenv').config()
 const express = require("express");
 const mongoose = require("mongoose");
 const route = require("./routes/route");
@@ -8,8 +9,8 @@ app.use(express.json());
 app.use(multer().any())
 app.use(express.urlencoded({ extended: true }));
 
-const port = process.env.PORT || 3000;
-const url = "mongodb+srv://Ashanka1:24Ashanka123@cluster0.yd6fjme.mongodb.net/group36Database";
+const port = process.env.PORT
+const url = process.env.MONGODB_URL
 
 mongoose.connect(url)
     .then(() => console.log("Mongos DB is connected"))
@@ -17,9 +18,6 @@ mongoose.connect(url)
 
 app.use('/', route);
 
-app.use(function(req, res){
-    return res.status(400).send({ status: false, message: "Path not found, please provide correct path"})
-})
 
 app.listen(port, function (req, res) {
     console.log('Express app running on port ' + port)

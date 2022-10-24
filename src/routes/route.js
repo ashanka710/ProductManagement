@@ -39,4 +39,9 @@ router.delete("/users/:userId/cart", authentication, authorization, deleteCart)
 router.post("/users/:userId/orders", authentication, authorization, createOrder);
 router.put("/users/:userId/orders", authentication, authorization, updateOrder);
 
+
+router.all('/*', async function (req, res) {
+    return res.status(400).send({ status: false, message: "Page not found" })
+})
+
 module.exports = router
